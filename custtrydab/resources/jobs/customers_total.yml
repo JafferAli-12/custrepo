@@ -1,0 +1,50 @@
+resources:
+  jobs:
+    customer_totals:
+      name: customer_totals
+      tasks:
+        - task_key: obj_creation
+          notebook_task:
+            notebook_path: src/notebooks/object_creation.ipynb
+            base_parameters:
+              catalog_name: "{{job.parameters.catalog_name}}"
+        - task_key: bronze
+          depends_on:
+            - task_key: obj_creation
+          notebook_task:
+            notebook_path: src/notebooks/bronze.ipynb
+            base_parameters:
+              catalog_name: "{{job.parameters.catalog_name}}"
+          max_retries: 1
+          min_retry_interval_millis: 0
+          disable_auto_optimization: false
+        - task_key: silver
+          depends_on:
+            - task_key: bronze
+          notebook_task:
+            notebook_path: src/notebooks/silver.ipynb
+            base_parameters:
+              catalog_name: "{{job.parameters.catalog_name}}"
+          max_retries: 1
+          min_retry_interval_millis: 0
+          disable_auto_optimization: false
+        - task_key: gold
+          depends_on:
+            - task_key: silver
+          notebook_task:
+            notebook_path: src/notebooks/gold.ipynb
+            base_parameters:
+              catalog_name: "{{job.parameters.catalog_name}}"
+          max_retries: 1
+          min_retry_interval_millis: 0
+          disable_auto_optimization: false
+      queue:
+        enabled: true
+      parameters:
+        - name: catalog_name
+          default: ""
+      environments:
+        - environment_key: Default
+          spec:
+            environment_version: "5"
+      performance_target: PERFORMANCE_OPTIMIZED

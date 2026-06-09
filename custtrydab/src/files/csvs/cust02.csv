@@ -1,0 +1,4 @@
+customer_id,name,city,amount,email
+1,Ram,Hyderabad,150,ram@gmail.com
+2,Sita,Vizag,250,sita@gmail.com
+3,John,Bangalore,350,john@gmail.com
